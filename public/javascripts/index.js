@@ -1,175 +1,105 @@
+// // Canvas
+// const canvas = document.querySelector('canvas.webgl')
 
-			let camera, scene, renderer;
-			let plane;
-			let pointer, raycaster, isShiftDown = false;
+// // Scene
+// const scene = new THREE.Scene()
 
-			let rollOverMesh, rollOverMaterial;
-			let cubeGeo, cubeMaterial;
+// const vertices = [];
 
-			const objects = [];
+// for ( let i = 0; i < 100; i ++ ) {
 
-			init();
-			render();
+// 	const x = THREE.MathUtils.randFloatSpread( 2000 );
+// 	const y = THREE.MathUtils.randFloatSpread( 2000 );
+// 	const z = THREE.MathUtils.randFloatSpread( 2000 );
 
-			function init() {
+// 	vertices.push( x, y, z );
 
-				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.set( 500, 800, 1300 );
-				camera.lookAt( 0, 0, 0 );
+// }
 
-				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0xf0f0f0 );
+// const geometry = new THREE.BufferGeometry();
+// geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
 
-				// roll-over helpers
+// const material = new THREE.PointsMaterial( { color: 0x888888 } );
 
-				const rollOverGeo = new THREE.BoxGeometry( 50, 50, 50 );
-				rollOverMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, opacity: 0.5, transparent: true } );
-				rollOverMesh = new THREE.Mesh( rollOverGeo, rollOverMaterial );
-				scene.add( rollOverMesh );
+// const points = new THREE.Points( geometry, material );
 
-				// cubes
+// scene.add( points );
 
-				cubeGeo = new THREE.BoxGeometry( 50, 50, 50 );
-				cubeMaterial = new THREE.MeshLambertMaterial( { color: 0xfeb74c, map: new THREE.TextureLoader().load( './images/square-outline-textured.png' ) } );
+// // Lights
 
-				// grid
+// const pointLight = new THREE.PointLight(0xffffff, 0.1)
+// pointLight.position.x = 2
+// pointLight.position.y = 3
+// pointLight.position.z = 4
+// scene.add(pointLight)
 
-				const gridHelper = new THREE.GridHelper( 1000, 10 );
-				scene.add( gridHelper );
+// /**
+//  * Sizes
+//  */
+// const sizes = {
+//     width: window.innerWidth,
+//     height: window.innerHeight
+// }
 
-				//
+// window.addEventListener('resize', () =>
+// {
+//     // Update sizes
+//     sizes.width = window.innerWidth
+//     sizes.height = window.innerHeight
 
-				raycaster = new THREE.Raycaster();
-				pointer = new THREE.Vector2();
+//     // Update camera
+//     camera.aspect = sizes.width / sizes.height
+//     camera.updateProjectionMatrix()
 
-				const geometry = new THREE.PlaneGeometry( 1000, 1000 );
-				geometry.rotateX( - Math.PI / 2 );
+//     // Update renderer
+//     renderer.setSize(sizes.width, sizes.height)
+//     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+// })
 
-				plane = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { visible: false } ) );
-				scene.add( plane );
+// /**
+//  * Camera
+//  */
+// // Base camera
+// const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+// camera.position.x = 0
+// camera.position.y = 0
+// camera.position.z = 2
+// scene.add(camera)
 
-				objects.push( plane );
+// // Controls
+// // const controls = new OrbitControls(camera, canvas)
+// // controls.enableDamping = true
 
-				// lights
+// /**
+//  * Renderer
+//  */
+// const renderer = new THREE.WebGLRenderer({
+//     canvas: canvas
+// })
+// renderer.setSize(sizes.width, sizes.height)
+// renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-				const ambientLight = new THREE.AmbientLight( 0x606060 );
-				scene.add( ambientLight );
+// /**
+//  * Animate
+//  */
 
-				const directionalLight = new THREE.DirectionalLight( 0xffffff );
-				directionalLight.position.set( 1, 0.75, 0.5 ).normalize();
-				scene.add( directionalLight );
+// const clock = new THREE.Clock()
 
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				document.body.appendChild( renderer.domElement );
+// const tick = () =>
+// {
 
-				document.addEventListener( 'pointermove', onPointerMove );
-				document.addEventListener( 'pointerdown', onPointerDown );
-				document.addEventListener( 'keydown', onDocumentKeyDown );
-				document.addEventListener( 'keyup', onDocumentKeyUp );
+//     const elapsedTime = clock.getElapsedTime()
 
-				//
 
-				window.addEventListener( 'resize', onWindowResize );
 
-			}
+//     // Update Orbital Controls
+//     // controls.update()
 
-			function onWindowResize() {
+//     // Render
+//     renderer.render(scene, camera)
 
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-
-				renderer.setSize( window.innerWidth, window.innerHeight );
-
-			}
-
-			function onPointerMove( event ) {
-
-				pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
-
-				raycaster.setFromCamera( pointer, camera );
-
-				const intersects = raycaster.intersectObjects( objects );
-
-				if ( intersects.length > 0 ) {
-
-					const intersect = intersects[ 0 ];
-
-					rollOverMesh.position.copy( intersect.point ).add( intersect.face.normal );
-					rollOverMesh.position.divideScalar( 50 ).floor().multiplyScalar( 50 ).addScalar( 25 );
-
-				}
-
-				render();
-
-			}
-
-			function onPointerDown( event ) {
-
-				pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
-
-				raycaster.setFromCamera( pointer, camera );
-
-				const intersects = raycaster.intersectObjects( objects );
-
-				if ( intersects.length > 0 ) {
-
-					const intersect = intersects[ 0 ];
-
-					// delete cube
-
-					if ( isShiftDown ) {
-
-						if ( intersect.object !== plane ) {
-
-							scene.remove( intersect.object );
-
-							objects.splice( objects.indexOf( intersect.object ), 1 );
-
-						}
-
-						// create cube
-
-					} else {
-
-						const voxel = new THREE.Mesh( cubeGeo, cubeMaterial );
-						voxel.position.copy( intersect.point ).add( intersect.face.normal );
-						voxel.position.divideScalar( 50 ).floor().multiplyScalar( 50 ).addScalar( 25 );
-						scene.add( voxel );
-
-						objects.push( voxel );
-
-					}
-
-					render();
-
-				}
-
-			}
-
-			function onDocumentKeyDown( event ) {
-
-				switch ( event.keyCode ) {
-
-					case 16: isShiftDown = true; break;
-
-				}
-
-			}
-
-			function onDocumentKeyUp( event ) {
-
-				switch ( event.keyCode ) {
-
-					case 16: isShiftDown = false; break;
-
-				}
-
-			}
-
-			function render() {
-
-				renderer.render( scene, camera );
-
-			}
+//     // Call tick again on the next frame
+//     window.requestAnimationFrame(tick)
+// }
+
+// tick()

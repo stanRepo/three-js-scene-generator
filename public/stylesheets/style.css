@@ -1,8 +1,15 @@
 body {
-margin:0;
-padding:0;
+  background-color: #fff;
+}
+img {
+  margin: 0px 2px;
+
+}
+#output > img{
+  width:100px;
+  height:100px;
 }
 
-a {
-  color: #00B7FF;
+#output{
+  line-height: 0;
 }
