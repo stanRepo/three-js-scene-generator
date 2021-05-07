@@ -18,10 +18,17 @@ var canvas = document.querySelector('canvas.webgl')
 var renderer = new THREE.WebGLRenderer(canvas,{antialias:true});
 
 // Configure renderer clear color
-renderer.setClearColor("#000000");
+renderer.setPixelRatio(window.devicePixelRatio || 1);
+renderer.setClearColor(0x161216)
 
 // Configure renderer size
 renderer.setSize( window.innerWidth, window.innerHeight );
+
+
+(function initThree(){
+    window.addEventListener('resize', resize, { passive: true
+    })
+})()
 
 // Append Renderer to DOM
 document.body.appendChild( renderer.domElement );
@@ -159,6 +166,13 @@ var render = function () {
   renderer.render(scene, camera);
 };
 
+function resize () {
+    renderer.width = window.innerWidth;
+    renderer.height = window.innerHeight;
+    renderer.setSize(renderer.width, renderer.height);
+    camera.aspect = renderer.width / renderer.height;
+    camera.updateProjectionMatrix();
+  }
 render();
 
 }
