@@ -1,4 +1,5 @@
 import three from "./three.js"
+import setup from "./setup.js"
  
 var toBase64 = [
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -58,9 +59,11 @@ var ctx = c.getContext("2d"),
 	imgW, //px
 	imgH, //px 
 	imgData,
-	tileDim = 50, //tile dimensions px
+	tileDim = setup.tileDimension, //tile dimensions px
 	tileCountX, //how many tiles we can fit
 	tileCountY;
+
+
 
 //read file input
 input.onchange = function() {
@@ -149,12 +152,12 @@ function drawTiles(tiles) {
         var base64 = uintbase64(d.data)
  
         const output = document.querySelector('#output')
-        const imageData = new ImageData(d.data,50,50); // insert tileDim
+        const imageData = new ImageData(d.data,setup.tileDimension,setup.tileDimension); // insert tileDim
      
         let blockCanvas = document.createElement('canvas')
         const ctxBlock = blockCanvas.getContext('2d')
-        blockCanvas.setAttribute("width", "50px") // insert Tiledim
-        blockCanvas.setAttribute("height", "50px") // insert Tiledim
+        blockCanvas.setAttribute("width", `${setup.tileDimension}px`) // insert Tiledim
+        blockCanvas.setAttribute("height", `${setup.tileDimension}px`) // insert Tiledim
         blockCanvas.classList.add('blockCanvas')
         // console.log(imageData)
         ctxBlock.putImageData(imageData, 0,0)
@@ -164,7 +167,9 @@ function drawTiles(tiles) {
             tile:blockCanvas.toDataURL("image/jpeg"), 
             x:d.x ,
             y:d.y ,
-            offset:offset
+            offset:offset,
+            tileCountX:tileCountX,
+            tileCountY:tileCountY
         })
 
 // const newImg = document.createElement('img')

@@ -1,5 +1,7 @@
+import setup from './setup.js'
 
 export default function(canvasBlockImages_jpg){
+
 
     console.log(canvasBlockImages_jpg)
 // Create an empty scene
@@ -78,69 +80,12 @@ for(let i=0;i<canvasBlockImages_jpg.length;i++){
        
         const cube = new THREE.Mesh(geometry, material);
 
-        
-        switch(canvasBlockImages_jpg[i].y){
-            case 0:
-                canvasBlockImages_jpg[i].y = 850
-                break;
-            case 850:
-                canvasBlockImages_jpg[i].y = 0
-                break;
-            case 50:
-                canvasBlockImages_jpg[i].y = 800
-                break;
-            case 100:
-                canvasBlockImages_jpg[i].y = 750
-                break;
-            case 150:
-                canvasBlockImages_jpg[i].y = 700
-                break;
-            case 200:
-                canvasBlockImages_jpg[i].y = 650
-                break;
-            case 250:
-                canvasBlockImages_jpg[i].y = 600
-                break;
-            case 300:
-                canvasBlockImages_jpg[i].y = 550
-                break;
-            case 350:
-                canvasBlockImages_jpg[i].y = 500
-                break;
-            case 400:
-                canvasBlockImages_jpg[i].y = 450
-                break;
-            case 450:
-                canvasBlockImages_jpg[i].y = 400
-                break;
-            case 500:
-                canvasBlockImages_jpg[i].y = 350
-                break;
-            case 550:
-                canvasBlockImages_jpg[i].y = 300
-                break;
-            case 600:
-                canvasBlockImages_jpg[i].y = 250
-                break;
-            case 650:
-                canvasBlockImages_jpg[i].y = 200
-                break;
-            case 700:
-                canvasBlockImages_jpg[i].y = 150
-                break;
-            case 750:
-                canvasBlockImages_jpg[i].y = 100
-                break;
-            case 800:
-                canvasBlockImages_jpg[i].y = 50
-                break;
-            case 850:
-                canvasBlockImages_jpg[i].y = 0
-                break;
+ // rearrange the tiles so the image is correctly rendered
+        const totalLengthPixels = canvasBlockImages_jpg[i].tileCountY * setup.tileDimension
+        canvasBlockImages_jpg[i].y = (canvasBlockImages_jpg[i].y - totalLengthPixels) * -1
 
-            }
 
-      
+      // set position
         cube.position.set(
         (canvasBlockImages_jpg[i].x/500 -1) * canvasBlockImages_jpg[i].offset, // x axis
         (canvasBlockImages_jpg[i].y/500 -1)* canvasBlockImages_jpg[i].offset, // y axis
