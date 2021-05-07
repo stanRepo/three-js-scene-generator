@@ -135,29 +135,22 @@ function getTiles() {
 }
 
 
-function bufferToBase64(buf) {
-    var binstr = Array.prototype.map.call(buf, function (ch) {
-        return String.fromCharCode(ch);
-    }).join('');
-    return btoa(binstr);
-}
+
 
 let canvasBlockImages_jpg = []
 //and draw with offset
-var offset = 1.1;
+var offset = 1.0;
 function drawTiles(tiles) {
 	console.log(tiles)
-    
+
     tiles.forEach((d,i) => {
         ctx.putImageData(d, d.x * offset, d.y * offset) ;
    
-        // console.log(d.data)
         var base64 = uintbase64(d.data)
-        // console.log(base64)
-        // console.log(d.data)
+ 
         const output = document.querySelector('#output')
         const imageData = new ImageData(d.data,50,50); // insert tileDim
-        // console.log(d.data.length)
+     
         let blockCanvas = document.createElement('canvas')
         const ctxBlock = blockCanvas.getContext('2d')
         blockCanvas.setAttribute("width", "50px") // insert Tiledim
@@ -166,9 +159,13 @@ function drawTiles(tiles) {
         // console.log(imageData)
         ctxBlock.putImageData(imageData, 0,0)
         output.appendChild(blockCanvas)
-        // console.log(blockCanvas.toDataURL())
-        // canvasBlockImages_PNG.push(blockCanvas.toDataURL("image/png"))
-        canvasBlockImages_jpg.push(blockCanvas.toDataURL("image/jpeg"))
+    
+        canvasBlockImages_jpg.push({ 
+            tile:blockCanvas.toDataURL("image/jpeg"), 
+            x:d.x ,
+            y:d.y ,
+            offset:offset
+        })
 
 // const newImg = document.createElement('img')
 // img.src = blockCanvas.toDataURL()
@@ -177,6 +174,8 @@ function drawTiles(tiles) {
     });
 
     // console.log(canvasBlockImages_PNG)
+
+   
 	three(canvasBlockImages_jpg)
 
 

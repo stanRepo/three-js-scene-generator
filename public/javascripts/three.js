@@ -1,3 +1,4 @@
+
 export default function(canvasBlockImages_jpg){
 
     console.log(canvasBlockImages_jpg)
@@ -30,58 +31,134 @@ document.body.appendChild( renderer.domElement );
 // ------------------------------------------------
 
 // Create a Cube Mesh with basic material
-let gY = 0;
-let gX= 0;
 
+const group = new THREE.Group();
 
-let positionX = 0;
-let positionY = 0
-
-for(let i=0;i<50;i++){
+for(let i=0;i<canvasBlockImages_jpg.length;i++){
   
     
-    const boxWidth = 0.06;
-    const boxHeight = 0.06;
-    const boxDepth = 0.12;
-    const rowLength = 1.04
-    let rowCounter = 0;
+    const boxWidth = 0.1;
+    const boxHeight = 0.1;
+    const boxDepth = 0.1;
+  
     const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
     const loader = new THREE.TextureLoader();
-    loader.load(canvasBlockImages_jpg[i], (texture) => {
-        const material = new THREE.MeshBasicMaterial({
-            map: texture,
-        });
+    loader.load(canvasBlockImages_jpg[i].tile, (texture) => {
+        // texture.rotation = 90;
+
+
+        var material = [
+            new THREE.MeshBasicMaterial({
+                map: texture //left
+            }),
+            new THREE.MeshBasicMaterial({
+                color: 'orange' //right
+            }),
+            new THREE.MeshBasicMaterial({
+                color: 'green' // top
+            }),
+            new THREE.MeshBasicMaterial({
+                color: 'blue' // bottom
+            }),
+            new THREE.MeshBasicMaterial({
+                map: texture,
+            }),
+            new THREE.MeshBasicMaterial({
+                color: 'yellow' //back
+            })
+        ];
+       
         const cube = new THREE.Mesh(geometry, material);
 
-        scene.add(cube);
+        
+        switch(canvasBlockImages_jpg[i].y){
+            case 0:
+                canvasBlockImages_jpg[i].y = 850
+                break;
+            case 850:
+                canvasBlockImages_jpg[i].y = 0
+                break;
+            case 50:
+                canvasBlockImages_jpg[i].y = 800
+                break;
+            case 100:
+                canvasBlockImages_jpg[i].y = 750
+                break;
+            case 150:
+                canvasBlockImages_jpg[i].y = 700
+                break;
+            case 200:
+                canvasBlockImages_jpg[i].y = 650
+                break;
+            case 250:
+                canvasBlockImages_jpg[i].y = 600
+                break;
+            case 300:
+                canvasBlockImages_jpg[i].y = 550
+                break;
+            case 350:
+                canvasBlockImages_jpg[i].y = 500
+                break;
+            case 400:
+                canvasBlockImages_jpg[i].y = 450
+                break;
+            case 450:
+                canvasBlockImages_jpg[i].y = 400
+                break;
+            case 500:
+                canvasBlockImages_jpg[i].y = 350
+                break;
+            case 550:
+                canvasBlockImages_jpg[i].y = 300
+                break;
+            case 600:
+                canvasBlockImages_jpg[i].y = 250
+                break;
+            case 650:
+                canvasBlockImages_jpg[i].y = 200
+                break;
+            case 700:
+                canvasBlockImages_jpg[i].y = 150
+                break;
+            case 750:
+                canvasBlockImages_jpg[i].y = 100
+                break;
+            case 800:
+                canvasBlockImages_jpg[i].y = 50
+                break;
+            case 850:
+                canvasBlockImages_jpg[i].y = 0
+                break;
 
-        positionX = positionX + boxWidth // step to right
-        positionX.toFixed(1)
+            }
 
-
-      rowCounter + 1;
-
-        console.log(rowCounter)
-        if(rowCounter === 10){
-            rowCounter = 0 // reset counter
-            console.log('firing')
-            positionY = positionY + boxHeight
-        }
-
-        console.log(positionX, positionY)
-
-      cube.position.set(positionX-2,positionY,0.1)
+      
+        cube.position.set(
+        (canvasBlockImages_jpg[i].x/500 -1) * canvasBlockImages_jpg[i].offset, // x axis
+        (canvasBlockImages_jpg[i].y/500 -1)* canvasBlockImages_jpg[i].offset, // y axis
+        0.0001 // set on same z-axis
+        )
+        group.add(cube); // add to group
     })
 }
 
+scene.add(group)
 // Render Loop
 var render = function () {
     requestAnimationFrame( render );
+
+
+    group.children.forEach(child=>{
+
+        child.rotation.y += 0.01
+        child.rotation.x += 0.01
+    })
 
   // Render the scene
   renderer.render(scene, camera);
 };
 
 render();
+
 }
