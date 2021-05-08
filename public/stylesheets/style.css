@@ -13,3 +13,10 @@ img {
 #output{
   line-height: 0;
 }
+
+#canvas{
+  max-width: 200px;
+}
+.blockCanvas{
+  display:none;
+}

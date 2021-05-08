@@ -1,9 +1,9 @@
-import setup from './setup.js'
+import setup from '../setup.js'
 
-export default function(canvasBlockImages_jpg){
+export default function(slicedImages){
 
 
-    console.log(canvasBlockImages_jpg)
+
 // Create an empty scene
 var scene = new THREE.Scene();
 
@@ -43,8 +43,9 @@ document.body.appendChild( renderer.domElement );
 
 const group = new THREE.Group();
 
-for(let i=0;i<canvasBlockImages_jpg.length;i++){
-  
+for(let i=0;i<slicedImages[0].length;i++){
+
+
     
     const boxWidth = 0.1;
     const boxHeight = 0.1;
@@ -53,46 +54,72 @@ for(let i=0;i<canvasBlockImages_jpg.length;i++){
     const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
     const loader = new THREE.TextureLoader();
-    loader.load(canvasBlockImages_jpg[i].tile, (texture) => {
+    const texture1 = loader.load(slicedImages[0][i].tile, (texture) => {
         // texture.rotation = 90;
-
+        texture.needsUpdate = true
+    })
+  
+    const texture2 = loader.load(slicedImages[1][i].tile, (texture) => {
+     
+        texture.needsUpdate = true
+    })
+  
+    const texture3 = loader.load(slicedImages[2][i].tile, (texture) => {
+      
+        texture.needsUpdate = true
+    })
+  
+    const texture4 = loader.load(slicedImages[3][i].tile, (texture) => {
+    
+        texture.needsUpdate = true
+    })
+  
+    const texture5 = loader.load(slicedImages[4][i].tile, (texture) => {
+       
+        texture.needsUpdate = true
+    })
+  
+    const texture6 = loader.load(slicedImages[5][i].tile, (texture) => {
+    
+        texture.needsUpdate = true
+    })
+  
 
         var material = [
-            new THREE.MeshBasicMaterial({
-                map: texture //left
+            new THREE.MeshBasicMaterial({ // left
+                map: texture1,
             }),
-            new THREE.MeshBasicMaterial({
-                color: 'orange' //right
+            new THREE.MeshBasicMaterial({ // right
+                map: texture2,
             }),
-            new THREE.MeshBasicMaterial({
-                color: 'green' // top
+            new THREE.MeshBasicMaterial({ // top
+                map: texture3,
             }),
-            new THREE.MeshBasicMaterial({
-                color: 'blue' // bottom
+            new THREE.MeshBasicMaterial({ // bottom
+                map: texture4,
             }),
-            new THREE.MeshBasicMaterial({
-                map: texture,
+            new THREE.MeshBasicMaterial({ // front
+                map: texture5,
             }),
-            new THREE.MeshBasicMaterial({
-                color: 'yellow' //back
-            })
+            new THREE.MeshBasicMaterial({ // back
+                map: texture6,
+            }),
         ];
        
         const cube = new THREE.Mesh(geometry, material);
 
  // rearrange the tiles so the image is correctly rendered
-        const totalLengthPixels = canvasBlockImages_jpg[i].tileCountY * setup.tileDimension
-        canvasBlockImages_jpg[i].y = (canvasBlockImages_jpg[i].y - totalLengthPixels) * -1
+        const totalLengthPixels = slicedImages[0][i].tileCountY * setup.tileDimension
+        slicedImages[0][i].y = (slicedImages[0][i].y - totalLengthPixels) * -1
 
 
       // set position
         cube.position.set(
-        (canvasBlockImages_jpg[i].x/500 -1) * canvasBlockImages_jpg[i].offset, // x axis
-        (canvasBlockImages_jpg[i].y/500 -1)* canvasBlockImages_jpg[i].offset, // y axis
+        (slicedImages[0][i].x/500 -1) * setup.offsetX, // x axis
+        (slicedImages[0][i].y/500 -1)* setup.offsetY, // y axis
         0.0001 // set on same z-axis
         )
         group.add(cube); // add to group
-    })
 }
 
 scene.add(group)
@@ -101,11 +128,14 @@ var render = function () {
     requestAnimationFrame( render );
 
 
-    group.children.forEach(child=>{
+    group.children.forEach((child, i)=>{
 
+        // child.rotation.y += 0.01 * i / 10
+        // child.rotation.x += 0.01 * i / 10
         child.rotation.y += 0.01
         child.rotation.x += 0.01
     })
+    
 
   // Render the scene
   renderer.render(scene, camera);

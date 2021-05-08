@@ -1,0 +1,8 @@
+#demoImages > img{
+    max-width: 100px;
+}
+#demoImages{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
